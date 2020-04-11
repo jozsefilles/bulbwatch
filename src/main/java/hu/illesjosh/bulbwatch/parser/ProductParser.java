@@ -7,14 +7,19 @@ import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.YEAR;
 import static java.util.stream.Collectors.toList;
 
+import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
+import java.util.Optional;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import hu.illesjosh.bulbwatch.explorer.Downloader;
+import hu.illesjosh.bulbwatch.model.Product;
 import hu.illesjosh.bulbwatch.model.Review;
 
 public class ProductParser {
@@ -35,6 +40,16 @@ public class ProductParser {
 		.appendValue(MINUTE_OF_HOUR)
 		.parseStrict()
 		.toFormatter();
+
+	public Optional<Product> parseProduct(URL url) {
+		return Downloader.download(url)
+			.map(this::parseProductName)
+			.map(n -> Product.builder()
+				.url(url)
+				.name(n)
+				.lastReviewDate(LocalDate.MIN)
+				.build());
+	}
 
 	public String parseProductName(Document doc) {
 		return doc.selectFirst(CSS_PROD_NAME)
