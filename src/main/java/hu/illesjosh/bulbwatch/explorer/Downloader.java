@@ -8,14 +8,14 @@ import org.jsoup.nodes.Document;
 
 public class Downloader {
 
-	private static final int HTTP_TIMEOUT = 5000;
+    private static final int HTTP_TIMEOUT = 5000;
 
-	public static Optional<Document> download(URL url) {
-		try {
-			return Optional.of(Jsoup.parse(url, HTTP_TIMEOUT));
-		} catch (Exception e) {
-			return Optional.empty();
-		}
-	}
+    public Optional<Document> download(URL url) {
+        try {
+            return Optional.of(Jsoup.parse(url, HTTP_TIMEOUT));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
 
 }
