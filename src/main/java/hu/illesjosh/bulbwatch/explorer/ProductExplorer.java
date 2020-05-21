@@ -14,10 +14,14 @@ public class ProductExplorer {
 
     private static final String CSS_PRODUCT_LINK = "a.product_link_normal";
 
+    private final LinkExtractor linkExtractor;
+    private final ProductParser productParser;
+
     @Inject
-    private LinkExtractor linkExtractor;
-    @Inject
-    private ProductParser productParser;
+    public ProductExplorer(LinkExtractor linkExtractor, ProductParser productParser) {
+        this.linkExtractor = linkExtractor;
+        this.productParser = productParser;
+    }
 
     public List<Product> explore(URL root) {
         return linkExtractor.extractLinksFromUrl(root)
