@@ -13,23 +13,21 @@ import org.jsoup.nodes.Document;
 public class LinkExtractor {
 
     private final Downloader downloader;
-    private final String anchorCssSelector;
 
     @Inject
-    public LinkExtractor(Downloader downloader, String anchorCssSelector) {
+    LinkExtractor(Downloader downloader) {
         this.downloader = downloader;
-        this.anchorCssSelector = anchorCssSelector;
     }
 
-    public List<URL> extractLinksFromUrl(URL pageUrl) {
+    public List<URL> extractLinksFromUrl(URL pageUrl, String linkSelector) {
         var links = downloader.download(pageUrl)
-            .map(doc -> extractLinksFromDocument(pageUrl, doc))
+            .map(doc -> extractLinksFromDocument(pageUrl, doc, linkSelector))
             .orElseGet(Collections::emptyList);
         return links;
     }
 
-    private List<URL> extractLinksFromDocument(URL pageUrl, Document doc) {
-        var links = doc.select(anchorCssSelector)
+    private List<URL> extractLinksFromDocument(URL pageUrl, Document doc, String linkSelector) {
+        var links = doc.select(linkSelector)
             .stream()
             .map(el -> el.attr("href"))
             .map(href -> url(pageUrl, href))

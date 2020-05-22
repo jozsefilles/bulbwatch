@@ -26,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class ProductExplorerTest {
 
     private static final URL PROD_CAT_PAGE_URL = url("https://lumenet.hu/emelt-fenyu-emelt-szinhomersekletu-h4-izzo");
+    private static final String PROD_LINK_SELECTOR = "whatever";
     private static final List<URL> EXTRACTED_LINKS = List.of(
         url(PROD_CAT_PAGE_URL, "about"),
         url(PROD_CAT_PAGE_URL, "contact")
@@ -43,9 +44,9 @@ public class ProductExplorerTest {
 
     @BeforeEach
     public void setup() {
-        explorer = new ProductExplorer(linkExtractor, productParser);
+        explorer = new ProductExplorer(linkExtractor, PROD_LINK_SELECTOR, productParser);
 
-        when(linkExtractor.extractLinksFromUrl(PROD_CAT_PAGE_URL))
+        when(linkExtractor.extractLinksFromUrl(PROD_CAT_PAGE_URL, PROD_LINK_SELECTOR))
             .thenReturn(EXTRACTED_LINKS);
 
         when(productParser.parseProduct(any()))
@@ -60,7 +61,7 @@ public class ProductExplorerTest {
     public void extractsLinks() {
         explorer.explore(PROD_CAT_PAGE_URL);
 
-        verify(linkExtractor).extractLinksFromUrl(PROD_CAT_PAGE_URL);
+        verify(linkExtractor).extractLinksFromUrl(PROD_CAT_PAGE_URL, PROD_LINK_SELECTOR);
     }
 
     @Test

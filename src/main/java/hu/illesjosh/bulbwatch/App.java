@@ -1,13 +1,17 @@
 package hu.illesjosh.bulbwatch;
 
+import static java.util.stream.Collectors.toList;
+
 import javax.inject.Inject;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.inject.Guice;
+import hu.illesjosh.bulbwatch.explorer.ProductExplorer;
 import hu.illesjosh.bulbwatch.model.Product;
 import hu.illesjosh.bulbwatch.parser.ProductParser;
 import org.jsoup.Jsoup;
@@ -15,6 +19,10 @@ import org.jsoup.nodes.Document;
 
 public class App {
 
+    static final String PROPERTIES_RESOURCE = "application.properties";
+
+    @Inject
+    private ProductExplorer productExplorer;
     @Inject
     private ProductParser productParser;
 
@@ -27,6 +35,20 @@ public class App {
     }
 
     private void doItAll() {
+        exploreProducts();
+
+        // visitProducts(); // TODO re-enable
+    }
+
+    private void exploreProducts() {
+        var explored = getAllCategoryLinks().stream()
+            .map(productExplorer::explore)
+            .flatMap(Collection::stream)
+            .collect(toList());
+        explored.forEach(System.out::println); // TODO do something!
+    }
+
+    private void visitProducts() {
         var subs = getAllProducts();
         var updates = new ArrayList<>();
         for (var s : subs) {
@@ -47,10 +69,22 @@ public class App {
         reportUpdates(updates);
     }
 
+    private List<URL> getAllCategoryLinks() {
+        return List.of(
+            testCategoryLink()
+        );
+    }
+
     private List<Product> getAllProducts() {
         return List.of(testProduct());
     }
 
+    // FIXME upgrade to real source
+    private static URL testCategoryLink() {
+        return url("https://lumenet.hu/xenon-hatasu-h7-izzo");
+    }
+
+    // FIXME upgrade to real source
     private static Product testProduct() {
         return Product.builder()
             .url(url("https://lumenet.hu/tungsram-sportlight-extreme-40-h7-58520-sup"))

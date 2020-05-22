@@ -44,12 +44,12 @@ public class LinkExtractorTest {
         when(downloader.download(TEST_URL))
             .thenReturn(Optional.of(TEST_DOC));
 
-        extractor = new LinkExtractor(downloader, ANCHOR_SELECTOR);
+        extractor = new LinkExtractor(downloader);
     }
 
     @Test
     public void extractsLinks() {
-        var result = extractor.extractLinksFromUrl(TEST_URL);
+        var result = extractor.extractLinksFromUrl(TEST_URL, ANCHOR_SELECTOR);
 
         assertIterableEquals(result,
             List.of(
